@@ -121,7 +121,7 @@ spec:
             
             echo "amqsget call output: $output"
 
-            if [[ $output =~ $expected ]];
+            if [[ $output =~ "<$expected>" ]];
             then
               echo "It's there!"
             else
