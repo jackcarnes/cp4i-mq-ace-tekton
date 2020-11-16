@@ -53,10 +53,12 @@ spec:
           export SVRCONN_SNI=$(echo "${QM_NAME}" | tr '[:upper:]' '[:lower:]')2e-conn.chl.mq.ibm.com
           export SVRCONN_NAME=$(echo "${QM_NAME}" | tr '[:lower:]' '[:upper:]').CONN # in upper case
           envsubst < config.mqsc > configout.mqsc
+
+          cat configout.mqsc > config.mqsc
           
-          cat configout.mqsc
-          
-          kubectl create configmap $MQSC_CM_NAME --namespace $(params.TARGET_NAMESPACE) --from-file=configout.mqsc || true
+          cat config.mqsc
+
+          kubectl create configmap $MQSC_CM_NAME --namespace $(params.TARGET_NAMESPACE) --from-file=config.mqsc || true
           
           export ROUTE_NAME="${QM_POD_NAME}-conn-traffic"
 
