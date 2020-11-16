@@ -49,12 +49,15 @@ spec:
 
           echo "creating config map from file config.mqsc with contents:"
           echo ""
-          cat config.mqsc
-          envsubst < config.mqsc > configout.mqsc
-          kubectl create configmap $MQSC_CM_NAME --namespace $(params.TARGET_NAMESPACE) --from-file=configout.mqsc || true
-          
+
           export SVRCONN_SNI=$(echo "${QM_NAME}" | tr '[:upper:]' '[:lower:]')2e-conn.chl.mq.ibm.com
           export SVRCONN_NAME=$(echo "${QM_NAME}" | tr '[:lower:]' '[:upper:]').CONN # in upper case
+          envsubst < config.mqsc > configout.mqsc
+          
+          cat configout.mqsc
+          
+          kubectl create configmap $MQSC_CM_NAME --namespace $(params.TARGET_NAMESPACE) --from-file=configout.mqsc || true
+          
           export ROUTE_NAME="${QM_POD_NAME}-conn-traffic"
 
           # Stub environment variables in qm_template
