@@ -119,14 +119,18 @@ spec:
             
             output=$(oc exec -ti $mq_pod -n cp4i /opt/mqm/samp/bin/amqsget $queue)
             
-            if [[ $output == *"$expected"* ]];
+            echo "amqsget call output: $output"
+
+            if [[ $output =~ $expected ]];
             then
               echo "It's there!"
             else
               echo "Uhoh did not read expected message from the Queue"
               exit 1;
             fi
+
           done
+
           fi
       securityContext:
         privileged: true
