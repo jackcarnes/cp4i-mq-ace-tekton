@@ -37,7 +37,7 @@ spec:
         - name: MQ_PVC_SC
           value: $(params.MQ_PVC_SC)
       script: |
-          set -e
+          set -eu
           
           # Grab the Git commit tag
           TAG="$(cat ../../.git/FETCH_HEAD | awk '{print substr($1,0,7)}')"
@@ -87,10 +87,16 @@ spec:
 
           ls
 
+          mq_pod="$(params.QM_NAME)-ibm-mq-0"
+
+          echo "Waiting for MQ Pod $mq_pod to come up"
+          sleep 60
+
           # find all queue names in the config.mqsc file in the syntax DEFINE QLOCAL('xx')
           queues=$(sed -n 's/^DEFINE QLOCAL('\''\([^'\'']*\)'\''.*$/\1/p' config.mqsc)
 
           msg_template="TEKTON-MSG-TO-"
+          
 
           if test -z "$queues"
           then
@@ -102,7 +108,7 @@ spec:
             do
             msg="${msg_template}$queue"
             echo "Sending this $msg to queue: $queue"
-            printf "%s\n\n" $msg | oc exec -ti basic-ibm-mq-0 -n cp4i /opt/mqm/samp/bin/amqsput $queue
+            printf "%s\n\n" $msg | oc exec -ti $mq_pod -n $(params.TARGET_NAMESPACE) /opt/mqm/samp/bin/amqsput $queue
           done
 
           #loop again to read messages
@@ -112,7 +118,7 @@ spec:
             do
             expected="${msg_template}$queue"
             echo "Expecting this msg: $expected"
-            oc exec basic-ibm-mq-0 -n cp4i /opt/mqm/samp/bin/amqsget $queue
+            oc exec -ti $mq_pod -n cp4i /opt/mqm/samp/bin/amqsget $queue
           done
           fi
       securityContext:
