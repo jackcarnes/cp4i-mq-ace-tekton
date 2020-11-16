@@ -116,9 +116,20 @@ spec:
           echo "$queues" | 
             while IFS= read -r queue; 
             do
+
             expected="${msg_template}$queue"
+            
             echo "Expecting this msg: $expected"
-            oc exec -ti $mq_pod -n cp4i /opt/mqm/samp/bin/amqsget $queue
+            
+            output=$(oc exec -ti $mq_pod -n cp4i /opt/mqm/samp/bin/amqsget $queue)
+            
+            if [[ $output == *"$expected"* ]];
+            then
+              echo "It's there!"
+            else
+              echo "Uoh did not read expected message from the Queue"
+              exit 1;
+            fi
           done
           fi
       securityContext:
