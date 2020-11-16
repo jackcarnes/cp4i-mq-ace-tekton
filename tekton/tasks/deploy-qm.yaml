@@ -46,6 +46,11 @@ spec:
           export MQSC_CM_NAME=cm-$TAG
           
           # Create the config map from the supplied file in workingDir
+
+          echo "creating config map from file config.mqsc with contents:"
+          echo ""
+          cat config.mqsc
+
           kubectl create configmap $MQSC_CM_NAME --namespace $(params.TARGET_NAMESPACE) --from-file=config.mqsc || true
           
           export SVRCONN_SNI=$(echo "${QM_NAME}" | tr '[:upper:]' '[:lower:]')2e-conn.chl.mq.ibm.com
@@ -84,9 +89,8 @@ spec:
 
           # find all queue names in the config.mqsc file in the syntax DEFINE QLOCAL('xx')
           queues=$(sed -n 's/^DEFINE QLOCAL('\''\([^'\'']*\)'\''.*$/\1/p' config.mqsc)
-          # queues=$(sed -n 's/^DEFINE QLOCAL('\''\([^'\'']*\)'\''.*$/\1/p' mq/basic/config.mqsc)
 
-          msg_template="Incoming from Tekton to Q:"
+          msg_template="TEKTON-MSG-TO-"
 
           if test -z "$queues"
           then
@@ -97,7 +101,7 @@ spec:
             while IFS= read -r queue; 
             do
             msg="${msg_template}$queue"
-            echo "Sending this msg: $msg"
+            echo "Sending this $msg to queue: $queue"
             printf "%s\n\n" $msg | oc exec -ti basic-ibm-mq-0 -n cp4i /opt/mqm/samp/bin/amqsput $queue
           done
 
