@@ -37,7 +37,7 @@ spec:
         - name: MQ_PVC_SC
           value: $(params.MQ_PVC_SC)
       script: |
-          set -eu
+          set -e
           
           # Grab the Git commit tag
           TAG="$(cat ../../.git/FETCH_HEAD | awk '{print substr($1,0,7)}')"
@@ -81,12 +81,8 @@ spec:
         - name: TARGET_NAMESPACE
           value: $(params.TARGET_NAMESPACE)
       script: |
-          set -e
+          set -eu
           
-          echo "current dir"
-
-          ls
-
           mq_pod="$(params.QM_NAME)-ibm-mq-0"
 
           echo "Waiting for MQ Pod $mq_pod to come up"
