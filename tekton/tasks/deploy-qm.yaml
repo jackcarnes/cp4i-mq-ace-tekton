@@ -127,7 +127,7 @@ spec:
             then
               echo "It's there!"
             else
-              echo "Uoh did not read expected message from the Queue"
+              echo "Uhoh did not read expected message from the Queue"
               exit 1;
             fi
           done
