@@ -119,14 +119,16 @@ spec:
             
             output=$(oc exec -ti $mq_pod -n cp4i /opt/mqm/samp/bin/amqsget $queue)
             
-            echo "amqsget call output: $output"
+            cat $output > output.txt
 
-            if [[ $output =~ "<$expected>" ]];
+            match=$(grep $expected output.txt)
+
+            if test -z "$match"
             then
-              echo "It's there!"
-            else
-              echo "Uhoh did not read expected message from the Queue"
+              echo "No match found"
               exit 1;
+            else
+              echo "Match found!"
             fi
 
           done
