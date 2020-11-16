@@ -46,6 +46,8 @@ spec:
           name: qmgr
   web:
     enabled: true
+  securityContext:
+    supplementalGroups: [99]
   queueManager:
     name: $QM_NAME
     mqsc:
@@ -53,9 +55,12 @@ spec:
           items:
             - config.mqsc
           name: $MQSC_CM_NAME
+    availability:
+      type: SingleInstance
     storage:
       queueManager:
-        type: ephemeral
+        class: $MQ_PVC_SC
+        type: persistent-claim
 ---
 apiVersion: route.openshift.io/v1
 kind: Route

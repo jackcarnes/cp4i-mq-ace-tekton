@@ -86,7 +86,7 @@ spec:
           mq_pod="$(params.QM_NAME)-ibm-mq-0"
 
           echo "Waiting for MQ Pod $mq_pod to come up"
-          sleep 25
+          sleep 15
 
           # find all queue names in the config.mqsc file in the syntax DEFINE QLOCAL('xx')
           queues=$(sed -n 's/^DEFINE QLOCAL('\''\([^'\'']*\)'\''.*$/\1/p' config.mqsc)
@@ -101,8 +101,10 @@ spec:
           echo "$queues" | 
             while IFS= read -r queue; 
             do
+
             msg="${msg_template}$queue"
             echo "Sending this $msg to queue: $queue"
+            
             printf "%s\n\n" $msg | oc exec -ti $mq_pod -n $(params.TARGET_NAMESPACE) /opt/mqm/samp/bin/amqsput $queue
           done
 
