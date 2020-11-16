@@ -86,7 +86,7 @@ spec:
           mq_pod="$(params.QM_NAME)-ibm-mq-0"
 
           echo "Waiting for MQ Pod $mq_pod to come up"
-          sleep 60
+          sleep 70
 
           # find all queue names in the config.mqsc file in the syntax DEFINE QLOCAL('xx')
           queues=$(sed -n 's/^DEFINE QLOCAL('\''\([^'\'']*\)'\''.*$/\1/p' config.mqsc)
