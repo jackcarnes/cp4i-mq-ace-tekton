@@ -116,7 +116,7 @@ spec:
             
             echo "Expecting this msg: $expected"
             
-            output=$(oc exec -ti $mq_pod -n cp4i /opt/mqm/samp/bin/amqsget $queue)
+            output=$(oc exec $mq_pod -n cp4i /opt/mqm/samp/bin/amqsget $queue)
             
             echo "$output" > output.txt
 
