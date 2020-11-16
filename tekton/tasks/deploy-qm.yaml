@@ -50,8 +50,8 @@ spec:
           echo "creating config map from file config.mqsc with contents:"
           echo ""
           cat config.mqsc
-
-          kubectl create configmap $MQSC_CM_NAME --namespace $(params.TARGET_NAMESPACE) --from-file=config.mqsc || true
+          envsubst < config.mqsc > configout.mqsc
+          kubectl create configmap $MQSC_CM_NAME --namespace $(params.TARGET_NAMESPACE) --from-file=configout.mqsc || true
           
           export SVRCONN_SNI=$(echo "${QM_NAME}" | tr '[:upper:]' '[:lower:]')2e-conn.chl.mq.ibm.com
           export SVRCONN_NAME=$(echo "${QM_NAME}" | tr '[:lower:]' '[:upper:]').CONN # in upper case
